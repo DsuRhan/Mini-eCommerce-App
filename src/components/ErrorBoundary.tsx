@@ -10,7 +10,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return { hasError: true };
   }
 
-  componentDidCatch(err: any, info: any) {
+  componentDidCatch(err: unknown, info: unknown) {
     console.error(err, info);
   }
 

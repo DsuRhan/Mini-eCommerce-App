@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import type { Product } from "../type";
 import { useCart } from "../hooks/useCart";
@@ -20,9 +20,10 @@ export default function ProductDetail() {
       if (!res.ok) throw new Error("Product not found");
       const d = await res.json();
       setProduct(d);
-    } catch (e: any) {
-      setErr(e.message || "Error");
-    } finally {
+    } catch (err: unknown) {
+  if (err instanceof Error) setErr(err.message);
+  else setErr("ERROR");
+} finally {
       setLoading(false);
     }
   }, [id]);

@@ -17,8 +17,9 @@ export default function ProductsPage() {
       if (!res.ok) throw new Error("Failed to fetch");
       const d = await res.json();
       setData(d);
-    } catch (err: any) {
-      setError(err.message || "Unknown error");
+    } catch (err: unknown) {
+    if (err instanceof Error) setError(err.message);
+    else setError("Unknown error");
     } finally {
       setLoading(false);
     }

@@ -8,8 +8,10 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const navigate = useNavigate();
-  const loc = useLocation() as any;
-  const from = loc.state?.from || "/products";
+const location = useLocation() as ReturnType<typeof useLocation> & {
+  state?: { from?: string };
+};
+const from = location.state?.from || "/products";
 
   const handle = async (e: React.FormEvent) => {
     e.preventDefault();
