@@ -1,73 +1,116 @@
-# React + TypeScript + Vite
+# 🛍️ Modern E-Commerce React App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive, and theme-adaptive e-commerce web app built with **React + TypeScript + TailwindCSS**.  
+Includes authentication, dark/light theme toggle, toast notifications, and private route protection.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Demo
+🔗 **Live Deployment:** [View App Here](https://your-deployment-link.com)  
+*(Replace with your actual deployed URL)*
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🧩 Features
 
-## Expanding the ESLint configuration
+- 🔐 **Login System:** User authentication with name & profile photo fetched from a public API.  
+- 🧭 **Protected Routes:** Product pages accessible only after login.  
+- 🏠 **Home Page:** Displays suggested products, categories, and promotions.  
+- 🛒 **Product Management:** Browse, search, and filter products by category.  
+- 🌓 **Theme Toggle:** Light/Dark mode switch using global state and Tailwind class switching.  
+- 🔔 **Toast Notifications:** Modern, animated feedback for user actions.  
+- 💾 **Cart Context:** Centralized cart state using React Context API.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## ⚙️ Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Tech | Description |
+|------|--------------|
+| **React + Vite** | Fast modern frontend setup |
+| **TypeScript** | Type safety across the app |
+| **TailwindCSS** | Utility-first responsive styling |
+| **React Router** | SPA routing & private routes |
+| **Context API** | State management for cart and theme |
+| **FakeStoreAPI** | Public API for products and categories |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 📂 Project Structure
+
+```
+src/
+ ├─ components/
+ │   ├─ Navbar.tsx
+ │   ├─ Toast.tsx
+ │   ├─ ThemeToggle.tsx
+ │   └─ ...
+ ├─ contexts/
+ │   ├─ CartContext.tsx
+ │   └─ ThemeContext.tsx
+ ├─ pages/
+ │   ├─ Home.tsx
+ │   ├─ Login.tsx
+ │   ├─ ProductList.tsx
+ │   └─ ProductDetail.tsx
+ ├─ routes/
+ │   └─ PrivateRoute.tsx
+ ├─ App.tsx
+ └─ main.tsx
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🧠 How It Works
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- The **theme toggle** uses a global context with `setTheme()` to dynamically apply Tailwind classes (`dark` or `light`) on the root element.
+- **Protected routes** ensure data fetching and rendering occur *only* after authentication.
+- **Toasts** are managed via a custom `useToast()` hook, with smooth transitions and auto-dismiss.
+
+---
+
+## 💻 Getting Started
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/ecommerce-react-app.git
+cd ecommerce-react-app
 ```
+
+### 2. Install Dependencies
+```bash
+npm install
+```
+
+### 3. Run Locally
+```bash
+npm run dev
+```
+
+### 4. Build for Production
+```bash
+npm run build
+```
+
+---
+
+## 🧾 API Reference
+
+Data fetched from [Fake Store API](https://fakestoreapi.com/)
+
+Endpoints used:
+- `/products`
+- `/products/categories`
+- `/products/:id`
+
+---
+
+## 🧑‍💻 Author
+
+Created by **[Your Name]**  
+📧 Contact: your.email@example.com  
+💼 GitHub: [@your-username](https://github.com/your-username)
+
+---
+
+> ⚠️ *Note: Replace placeholders (`your-username`, `your-deployment-link.com`, etc.) with your actual project details before publishing.*
