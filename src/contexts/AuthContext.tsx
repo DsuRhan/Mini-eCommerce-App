@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
 
-  const login = async (name?: string, password?: string) => {
+  const login = async (name?: string) => {
     try {
       const res = await fetch("https://randomuser.me/api/");
       const data = await res.json();
