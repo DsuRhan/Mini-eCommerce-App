@@ -1,41 +1,54 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useState, useEffect, type ReactNode } from "react";
 
-type AuthContextType = {
-  user: { name: string; avatar?: string } | null;
-  login: (name: string, password: string) => Promise<boolean>;
+interface User {
+  name: string;
+  avatar: string;
+}
+
+interface AuthContextType {
+  user: User | null;
+  ready: boolean;
+  login: (name?: string, password?: string) => Promise<void>;
   logout: () => void;
-};
+}
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{ name: string; avatar?: string } | null>(() => {
-    const raw = localStorage.getItem("auth_user");
-    return raw ? JSON.parse(raw) : null;
-  });
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [ready, setReady] = useState(false);
+
+  const login = async (name?: string, password?: string) => {
+    try {
+      const res = await fetch("https://randomuser.me/api/");
+      const data = await res.json();
+      const person = data.results[0];
+      const avatar = person.picture.medium;
+      const newUser: User = {
+        name: name || `${person.name.first} ${person.name.last}`,
+        avatar,
+      };
+      localStorage.setItem("user", JSON.stringify(newUser));
+      setUser(newUser);
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+  };
 
   useEffect(() => {
-    if (user) localStorage.setItem("auth_user", JSON.stringify(user));
-    else localStorage.removeItem("auth_user");
-  }, [user]);
-
-  const login = useCallback(async (name: string, password: string) => {
-    // simulasi login sederhana
-    await new Promise((r) => setTimeout(r, 300));
-    if (name && password) {
-      setUser({ name, avatar: `https://i.pravatar.cc/40?u=${encodeURIComponent(name)}` });
-      return true;
-    }
-    return false;
+    const saved = localStorage.getItem("user");
+    if (saved) setUser(JSON.parse(saved));
+    setReady(true);
   }, []);
 
-  const logout = useCallback(() => setUser(null), []);
-
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
-};
-
-export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  return (
+    <AuthContext.Provider value={{ user, ready, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

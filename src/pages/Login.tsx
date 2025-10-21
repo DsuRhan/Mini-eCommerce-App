@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import React, { useContext, useState } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useToast } from "../components/Toast";
 
-export default function Login() {
-  const { login } = useAuth();
+
+export default function LoginPage() {
+  const auth = useContext(AuthContext)!;
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState<string | null>(null);
-  const navigate = useNavigate();
-const location = useLocation() as ReturnType<typeof useLocation> & {
-  state?: { from?: string };
-};
-const from = location.state?.from || "/products";
+  const nav = useNavigate();
+  const loc = useLocation() as { state?: { from?: string } };
+  const from = loc.state?.from || "/home";
+  const { push } = useToast();
 
   const handle = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErr(null);
-    const ok = await login(name.trim(), password);
-    if (ok) {
-      navigate(from, { replace: true });
+    await auth.login(name, password);
+    if (auth.user) {
+      push("Login successful");
+      nav(from);
     } else {
-      setErr("Login failed");
+      push("Login failed");
     }
   };
 
@@ -31,7 +31,7 @@ const from = location.state?.from || "/products";
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Name"
+          placeholder="Display name (optional)"
           className="w-full border px-3 py-2 rounded"
         />
         <input
@@ -41,8 +41,12 @@ const from = location.state?.from || "/products";
           type="password"
           className="w-full border px-3 py-2 rounded"
         />
-        <button type="submit" className="w-full bg-blue-600 text-white px-3 py-2 rounded">Login</button>
-        {err && <div className="text-red-600 text-sm">{err}</div>}
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white px-3 py-2 rounded"
+        >
+          Login
+        </button>
       </form>
     </div>
   );

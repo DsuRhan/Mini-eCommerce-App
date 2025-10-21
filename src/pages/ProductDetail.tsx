@@ -1,15 +1,18 @@
-import { useEffect, useState, useCallback } from "react";
+import  { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import type { Product } from "../type";
-import { useCart } from "../hooks/useCart";
+import {type Product as PType } from "../contexts/CartContext";
+import { useContext } from "react";
+import { CartContext } from "../contexts/CartContext";
+import { useToast } from "../components/Toast";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<PType | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
-  const { add } = useCart();
-  const navigate = useNavigate();
+  const cart = useContext(CartContext)!;
+  const push = useToast().push;
+  const nav = useNavigate();
 
   const fetchProduct = useCallback(async () => {
     if (!id) return;
@@ -17,13 +20,13 @@ export default function ProductDetail() {
     setErr(null);
     try {
       const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-      if (!res.ok) throw new Error("Product not found");
-      const d = await res.json();
-      setProduct(d);
-    } catch (err: unknown) {
-  if (err instanceof Error) setErr(err.message);
-  else setErr("ERROR");
-} finally {
+      if (!res.ok) throw new Error("Not found");
+      const data = (await res.json()) as PType;
+      setProduct(data);
+    } catch (e: unknown) {
+      if (e instanceof Error) setErr(e.message);
+      else setErr("Unknown error");
+    } finally {
       setLoading(false);
     }
   }, [id]);
@@ -37,29 +40,32 @@ export default function ProductDetail() {
   if (!product) return null;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-      <img src={product.image} alt={product.title} className="object-contain h-64 mx-auto" />
+    <div className="p-6 max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+      <img src={product.image} alt={product.title} className="h-72 object-contain mx-auto" />
       <div>
         <h2 className="text-xl font-bold">{product.title}</h2>
-        <p className="mt-2 text-gray-600">{product.description}</p>
+        <p className="text-gray-600 mt-2">{product.description}</p>
         <div className="mt-4 flex items-center justify-between">
           <span className="text-2xl font-bold">${product.price.toFixed(2)}</span>
-          <div className="space-x-2">
+          <div className="flex gap-2">
             <button
               onClick={() => {
-                add(product, 1);
-                // exit product detail popup behaviour (here: navigate back)
-                navigate(-1);
+                cart.addToCart(product);
+                push("Added to cart");
               }}
-              className="bg-green-600 text-white px-4 py-2 rounded"
-            >
-              Add to Cart & Back
-            </button>
-            <button
-              onClick={() => add(product, 1)}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
+              className="bg-blue-600 text-white px-3 py-2 rounded"
             >
               Add to Cart
+            </button>
+            <button
+              onClick={() => {
+                cart.addToCart(product);
+                push("Added & returning");
+                nav(-1);
+              }}
+              className="bg-green-600 text-white px-3 py-2 rounded"
+            >
+              Add & Back
             </button>
           </div>
         </div>
